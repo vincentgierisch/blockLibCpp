@@ -8,7 +8,7 @@ BUILDDIR := build
 CFLAGS := -std=c++17 -O3 -g
 
 # execute shell command 'find': src/test1.cpp src/test2.cpp
-SOURCES := $(wildcard $(SRCDIR)/*.cpp)
+SOURCES := $(shell find $(SRCDIR) -type f -name *.cpp)
 
 # LIBSOURCES := $(shell
 # replace .cpp with .o
@@ -22,7 +22,6 @@ OBJECTS := $(patsubst $(SRCDIR)/%, $(BUILDDIR)/%, $(OBJECTFILES))
 # @ will disable the output
 $(TARGET): $(OBJECTS)
 	@echo "Linking $(OBJECTS)"
-	@echo "$(LIB)"
 	@mkdir -p $(BINDIR)
 	@$(COMPILER) $^ -o $(TARGET) $(LIB)
 
@@ -33,7 +32,7 @@ $(TARGET): $(OBJECTS)
 # the percent (%) in the dependencie is replaced with what ever the percent in target matches
 # -o prevents compiler from linking the files
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
-	@mkdir -p $(BUILDDIR)
+	@mkdir -p $(BUILDDIR) $(BUILDDIR)/ogl $(BUILDDIR)/utils
 	@$(COMPILER) $(CFLAGS) -c -o $@ $^
 	@echo "[Compiled] $@"
 
