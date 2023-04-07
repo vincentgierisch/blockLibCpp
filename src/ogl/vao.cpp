@@ -5,15 +5,15 @@ VAO::VAO() {
 	glGenVertexArrays(1, &(this->Id));
 }
 
-void VAO::LinkVBO(VBO& vbo, GLuint layout) {
+void VAO::LinkAttrib(VBO& vbo, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset) {
 	vbo.Bind();
 	glVertexAttribPointer(
 		layout, // attribute 0 (no paricular reason, however must match layout in shader)
-		3, // size
-		GL_FLOAT, // type 
+		numComponents, // size
+		type, // type 
 		GL_FALSE, // normalized 
-		0, // stride 
-		(void*)0 // array buffer offset
+		stride, // stride 
+		offset // array buffer offset
 	);
 	glEnableVertexAttribArray(layout);
 	vbo.Unbind();

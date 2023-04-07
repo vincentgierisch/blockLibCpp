@@ -32,7 +32,7 @@ $(TARGET): $(OBJECTS)
 # the percent (%) in the dependencie is replaced with what ever the percent in target matches
 # -o prevents compiler from linking the files
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
-	@mkdir -p $(BUILDDIR) $(BUILDDIR)/ogl $(BUILDDIR)/utils
+	@mkdir -p $(BUILDDIR) $(BUILDDIR)/ogl $(BUILDDIR)/utils $(BUILDDIR)/common
 	@$(COMPILER) $(CFLAGS) -c -o $@ $^
 	@echo "[Compiled] $@"
 
