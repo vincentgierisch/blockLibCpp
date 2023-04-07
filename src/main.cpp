@@ -10,6 +10,7 @@
 #include "ogl/vbo.h"
 #include "ogl/vao.h"
 #include "ogl/ebo.h"
+#include "common/camera.h"
 
 #define WIDTH 800
 #define HEIGHT 800
@@ -71,22 +72,6 @@ int main() {
 	// make the VAO the current Vertex Array Object by binding it
 	VAO1.Bind();
 
-
-	// Projection matrix -> 45° Field of View, 4:3 ratio, display range : 0.1 unti <-> 100 units
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
-	// camera matrix
-	glm::mat4 View = glm::lookAt(
-		glm::vec3(4, 3, 3),
-		glm::vec3(0, 0, 0),
-		glm::vec3(0, 1, 0)
-	);
-
-	glm::mat4 Model = glm::mat4(1.0f);
-
-	GLuint projMatrixId = glGetUniformLocation(shaderProgram.Id, "proj");
-	GLuint viewMatrixId = glGetUniformLocation(shaderProgram.Id, "view");
-	GLuint modelMatrixId = glGetUniformLocation(shaderProgram.Id, "model");
-
 	// create vertex buffer
 	VBO VBO1(vertices, sizeof(vertices));
 	//Generate Element Buffer Object and links it to the indices
@@ -100,6 +85,8 @@ int main() {
 	VAO1.Unbind();
 	VBO1.Unbind();
 	EBO1.Unbind();	
+
+	Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
 		
 	// render loop
 	do {
@@ -111,9 +98,8 @@ int main() {
 		
 		shaderProgram.Activate();	
 		
-		glUniformMatrix4fv(projMatrixId, 1, GL_FALSE, glm::value_ptr(Projection));
-		glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, glm::value_ptr(View));
-		glUniformMatrix4fv(modelMatrixId, 1, GL_FALSE, glm::value_ptr(Model));
+		camera.updateInputs(window);
+		camera.updateMatrix(45.0f, 0.1f, 100.0f, shaderProgram);
 			
 		VAO1.Bind();
 		
