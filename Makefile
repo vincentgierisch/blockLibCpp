@@ -1,11 +1,11 @@
 # declaring some variables
 COMPILER := g++
-TARGET := bin/openGLTest
-LIB := -lglfw -lrt -lm -ldl -lm -pthread -lrt -lffi -lGL -lGLEW
+TARGET := bin/blockLibCpp
+LIB := -lglfw -lrt -lm -ldl -lm -pthread -lrt -lffi -lGL -lGLEW -Llib
 BINDIR := bin
 SRCDIR := src
 BUILDDIR := build
-CFLAGS := -std=c++17 -O3 -g
+CFLAGS := -std=c++17 -g # -O3 
 
 # execute shell command 'find': src/test1.cpp src/test2.cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.cpp)

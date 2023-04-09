@@ -3,6 +3,8 @@
 #include <GLFW/glfw3.h>
 #include <math.h>
 
+//#include <stb/stb_image.hpp>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -10,12 +12,13 @@
 #include "ogl/vbo.h"
 #include "ogl/vao.h"
 #include "ogl/ebo.h"
+#include "ogl/texture.h"
 #include "common/camera.h"
 
 #define WIDTH 800
 #define HEIGHT 800
 
-GLfloat vertices[] = {
+GLfloat vertices_cpy[] = {
 	// Coordinates										/ COLOR
 	   -0.5f, 	-0.5f * float(sqrt(3)) / 3, 	0.0f,	0.8f, 0.3f, 0.02f, // lower left corner
 	   0.5f, 	-0.5f * float(sqrt(3)) / 3, 	0.0f, 	0.8f, 0.3f, 0.02f,// lower right corner
@@ -25,11 +28,67 @@ GLfloat vertices[] = {
 	   0.0f, 	-0.5f * float(sqrt(3)) / 3, 	0.0f, 	0.8f, 0.3f, 0.02f,// inner down
 };
 
-GLuint indices[] = {
+GLuint indices_cpy[] = {
 	0, 3, 5, // lower left triangle
 	3, 2, 4, // lower right triangle
 	5, 4, 1 // upper triangle
 };
+
+// Vertices coordinates
+GLfloat vertices[] =
+{ //     COORDINATES     /        COLORS      /   TexCoord  //
+	-0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,	0.0f, 0.0f, // Lower left corner
+	-0.5f,  0.5f, 0.0f,     0.0f, 1.0f, 0.0f,	0.0f, 1.0f, // Upper left corner
+	 0.5f,  0.5f, 0.0f,     0.0f, 0.0f, 1.0f,	1.0f, 1.0f, // Upper right corner
+	 0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f,	1.0f, 0.0f  // Lower right corner
+};
+
+// Indices for vertices order
+GLuint indices[] =
+{
+	0, 2, 1, // Upper triangle
+	0, 3, 2 // Lower triangle
+};
+
+GLfloat vertices_cube[] = {
+    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f, // triangle 1 : begin
+    -1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // triangle 1 : end
+    1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f, // triangle 2 : begin
+    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f, // triangle 2 : end
+    1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f
+};
+
 
 int main() {
 	
@@ -65,26 +124,30 @@ int main() {
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glViewport(0, 0, WIDTH, HEIGHT);
 	
-	Shader shaderProgram("shaders/SimpleShader.vert", "shaders/SimpleShader.frag");
-
+	Shader shaderProgram("res/shaders/SimpleShader.vert", "res/shaders/SimpleShader.frag");
+	
 	// create reference containers for the Vertex Array Object and the Vertex Buffer Object
 	VAO VAO1;
 	// make the VAO the current Vertex Array Object by binding it
 	VAO1.Bind();
-
 	// create vertex buffer
 	VBO VBO1(vertices, sizeof(vertices));
 	//Generate Element Buffer Object and links it to the indices
 	EBO EBO1(indices, sizeof(indices));
 
 	// link vbo to vao
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6*sizeof(float), (void*)0);
-	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6*sizeof(float), (void*)(3 * sizeof(float)));
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8*sizeof(float), (void*)0);
+	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8*sizeof(float), (void*)(3 * sizeof(float)));
+	VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8*sizeof(float), (void*)(6 * sizeof(float)));
 	
 	// unbind all to prevent accidentally modification
 	VAO1.Unbind();
 	VBO1.Unbind();
 	EBO1.Unbind();	
+
+	// Texture grass("res/images/block.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	Texture grass("res/images/test.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	grass.texUnit(shaderProgram, "tex0", 0);
 
 	Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
 		
@@ -98,13 +161,15 @@ int main() {
 		
 		shaderProgram.Activate();	
 		
+		grass.Bind();
+	
 		camera.updateInputs(window);
 		camera.updateMatrix(45.0f, 0.1f, 100.0f, shaderProgram);
 			
 		VAO1.Bind();
 		
 		// Draw the primitives, number of indices, datatype of indices, index of indices
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		
 		// swap back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -115,7 +180,7 @@ int main() {
 	// Delete all objects
 	VAO1.Delete();
 	VBO1.Delete();
-	EBO1.Delete();
+	//EBO1.Delete();
 	shaderProgram.Delete();
 	
 	glfwTerminate();
