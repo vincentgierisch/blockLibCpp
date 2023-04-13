@@ -2,6 +2,7 @@
 #define VAO_H
 
 #include "vbo.h"
+#include <glm/glm.hpp>
 #include <GL/glew.h>
 
 class VAO {

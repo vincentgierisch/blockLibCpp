@@ -10,8 +10,10 @@ class Shader {
 	public:
 		// Reference ID of the shader program
 		GLuint Id;
+		Shader(){};
 		Shader(const char* vertexFile, const char* fragmentFile);
-
+		
+		void loadProgram(const char* vertexFile, const char* fragmentFile);
 		// Activate the shader program
 		void Activate();
 		// Delete the shader program

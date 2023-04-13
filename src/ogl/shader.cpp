@@ -1,6 +1,6 @@
 #include "shader.h"
 
-Shader::Shader(const char* vertexFile, const char* fragmentFile) {
+void Shader::loadProgram(const char* vertexFile, const char* fragmentFile){
 	// read files and store the strings
 	std::string vertexCode = Helper::readFileContents(vertexFile); 
 	std::string fragmentCode = Helper::readFileContents(fragmentFile); 
@@ -29,6 +29,10 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile) {
 	// Delete shaders (they are already loaded/copied to the program)
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);	
+}
+
+Shader::Shader(const char* vertexFile, const char* fragmentFile) {
+	this->loadProgram(vertexFile, fragmentFile);
 }
 
 void Shader::Activate() {

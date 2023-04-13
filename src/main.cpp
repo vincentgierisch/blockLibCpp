@@ -1,3 +1,4 @@
+#define STB_IMAGE_IMPLEMENTATION
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -15,79 +16,12 @@
 #include "ogl/texture.h"
 #include "common/camera.h"
 
+#include "world/chunk.h"
+#include "world/generator/flatLandGenerator.h"
+#include "renderer/chunkRenderer.h"
+
 #define WIDTH 800
 #define HEIGHT 800
-
-GLfloat vertices_cpy[] = {
-	// Coordinates										/ COLOR
-	   -0.5f, 	-0.5f * float(sqrt(3)) / 3, 	0.0f,	0.8f, 0.3f, 0.02f, // lower left corner
-	   0.5f, 	-0.5f * float(sqrt(3)) / 3, 	0.0f, 	0.8f, 0.3f, 0.02f,// lower right corner
-	   0.0f, 	0.5f * float(sqrt(3)) * 2 / 3, 	0.0f, 	1.0f, 0.0f, 0.02f,// upper corner
-	   -0.25f, 	0.5f * float(sqrt(3)) / 6, 		0.0f, 	0.9f, 0.45f, 0.17f,// inner left
-	   0.25f, 	0.5f * float(sqrt(3)) / 6, 		0.0f, 	0.9f, 0.45f, 0.17f,// inner right
-	   0.0f, 	-0.5f * float(sqrt(3)) / 3, 	0.0f, 	0.8f, 0.3f, 0.02f,// inner down
-};
-
-GLuint indices_cpy[] = {
-	0, 3, 5, // lower left triangle
-	3, 2, 4, // lower right triangle
-	5, 4, 1 // upper triangle
-};
-
-// Vertices coordinates
-GLfloat vertices[] =
-{ //     COORDINATES     /        COLORS      /   TexCoord  //
-	-0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,	0.0f, 0.0f, // Lower left corner
-	-0.5f,  0.5f, 0.0f,     0.0f, 1.0f, 0.0f,	0.0f, 1.0f, // Upper left corner
-	 0.5f,  0.5f, 0.0f,     0.0f, 0.0f, 1.0f,	1.0f, 1.0f, // Upper right corner
-	 0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f,	1.0f, 0.0f  // Lower right corner
-};
-
-// Indices for vertices order
-GLuint indices[] =
-{
-	0, 2, 1, // Upper triangle
-	0, 3, 2 // Lower triangle
-};
-
-GLfloat vertices_cube[] = {
-    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f, // triangle 1 : begin
-    -1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // triangle 1 : end
-    1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f, // triangle 2 : begin
-    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f, // triangle 2 : end
-    1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f,-1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    1.0f,-1.0f, 1.0f, 1.0f, 0.0f, 1.0f
-};
 
 
 int main() {
@@ -123,53 +57,33 @@ int main() {
 	}
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glViewport(0, 0, WIDTH, HEIGHT);
-	
-	Shader shaderProgram("res/shaders/SimpleShader.vert", "res/shaders/SimpleShader.frag");
-	
-	// create reference containers for the Vertex Array Object and the Vertex Buffer Object
-	VAO VAO1;
-	// make the VAO the current Vertex Array Object by binding it
-	VAO1.Bind();
-	// create vertex buffer
-	VBO VBO1(vertices, sizeof(vertices));
-	//Generate Element Buffer Object and links it to the indices
-	EBO EBO1(indices, sizeof(indices));
 
-	// link vbo to vao
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8*sizeof(float), (void*)0);
-	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8*sizeof(float), (void*)(3 * sizeof(float)));
-	VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8*sizeof(float), (void*)(6 * sizeof(float)));
+		// Enable depth test
+	glEnable(GL_DEPTH_TEST);
+	// Accept fragment if it closer to the camera than the former one
+	glDepthFunc(GL_LESS); 	
 	
-	// unbind all to prevent accidentally modification
-	VAO1.Unbind();
-	VBO1.Unbind();
-	EBO1.Unbind();	
-
-	// Texture grass("res/images/block.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	Texture grass("res/images/test.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	grass.texUnit(shaderProgram, "tex0", 0);
-
 	Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
-		
+	ChunkRenderer cRenderer;
+	FlatLandGenerator flGenerator;
+	Chunk testChunk;
+	flGenerator.generateTerrain(testChunk);
+	testChunk.getMesh().activate();
+
+	std::cout << "Amount of indices: " << testChunk.getMesh().getMesh().indices.size() << std::endl;
+	
 	// render loop
 	do {
-
 		// specify the color of the background
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		// clear the back buffer and assign the new colr to it
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		shaderProgram.Activate();	
 		
-		grass.Bind();
 	
 		camera.updateInputs(window);
-		camera.updateMatrix(45.0f, 0.1f, 100.0f, shaderProgram);
 			
-		VAO1.Bind();
-		
-		// Draw the primitives, number of indices, datatype of indices, index of indices
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		cRenderer.draw(testChunk.getMesh(), camera);	
 		
 		// swap back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -177,12 +91,6 @@ int main() {
 	}
 	while(glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
 
-	// Delete all objects
-	VAO1.Delete();
-	VBO1.Delete();
-	//EBO1.Delete();
-	shaderProgram.Delete();
-	
 	glfwTerminate();
 	return 0;
 }
