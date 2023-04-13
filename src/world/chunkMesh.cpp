@@ -18,6 +18,12 @@ void ChunkMesh::updateMesh(BlockType block, glm::vec3 coords, unsigned int index
             color = {0.460f, 0.444f, 0.437f};
             surfaceColor = color;
             break;
+        case BlockType::Wood:
+            color = {0.530f, 0.369f, 0.0477f};
+            surfaceColor = color;
+        case BlockType::Leaves:
+            color = {0.265f, 0.530f, 0.0477f};
+            surfaceColor = {0.198f, 0.440f, 0.00f};
         default:
             break;
     }
