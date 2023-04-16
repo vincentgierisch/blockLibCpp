@@ -11,4 +11,5 @@ void ChunkRenderer::draw(ChunkMesh& chunkMesh, Camera& camera) {
     camera.updateMatrix(45.0f, 0.1f, 100.0f);
     camera.exportMatrix(this->_shader);
     glDrawElements(GL_TRIANGLES, chunkMesh.getMesh().indices.size(), GL_UNSIGNED_INT, 0);
+    // glDrawElements(GL_LINES, chunkMesh.getMesh().indices.size(), GL_UNSIGNED_INT, 0);
 }

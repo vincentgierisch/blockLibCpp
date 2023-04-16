@@ -19,9 +19,10 @@ class ChunkMesh {
 		VAO _vao;
 		VBO _vbo;
 		EBO _ebo;
+		unsigned int _numberOfBlocks;
 	public:
-		ChunkMesh(){};
-		void updateMesh(BlockType block, glm::vec3 coords, unsigned int indexOffset, Chunk* chunk);
+		ChunkMesh():_numberOfBlocks(0){};
+		void updateMesh(BlockType block, glm::vec3 coords, std::array<bool, 6>& visibleFaces, unsigned int indexOffset);
 		void activate();
 		inline Mesh& getMesh() {
 			return this->_mesh;

@@ -39,7 +39,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	
 
 	// Create Window
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "RisiGame", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "BlockLibCpp", NULL, NULL);
 	if(window == NULL) {
 		std::cout << "Failed to open GLFW window" << std::endl;
 		glfwTerminate();
@@ -68,6 +68,7 @@ int main() {
 	FlatLandGenerator flGenerator;
 	Chunk testChunk;
 	flGenerator.generateTerrain(testChunk);
+	testChunk.generateMesh();
 	testChunk.getMesh().activate();
 
 	std::cout << "Amount of indices: " << testChunk.getMesh().getMesh().indices.size() << std::endl;
