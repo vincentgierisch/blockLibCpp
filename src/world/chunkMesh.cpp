@@ -59,14 +59,14 @@ void ChunkMesh::updateMesh(BlockType block, glm::vec3 coords, std::array<bool, 6
         3,  2,  0,
         0,  2,  1,
         // 1
-        0,  1,  4,
-        4,  1,  5,
+        3,  2,  6,
+        7,  6,  3,
         // 2
         2,  5,  6,
         2,  1,  5,
         // 3
-        3,  2,  6,
-        7,  6,  3,
+        0,  1,  4,
+        4,  1,  5,
         // 4
         3,  0,  7,
         7,  4,  0,
