@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <math.h>
 
 #include <GL/glew.h>

@@ -11,8 +11,6 @@
 #include "../ogl/ebo.h"
 #include "../ogl/shader.h"
 
-class Chunk;
-
 class ChunkMesh {
 	private:
 		Mesh _mesh;
